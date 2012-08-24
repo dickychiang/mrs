@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# Manage the Repo script
+#
+# Auther(s) : Hsiao-Yu Chiang <dickychiang73@gmail.com>
+#
+
+# Parameter
+PWD=`pwd`
+MYDROID_PATH=$2
+REMOTE=$3
+URL=git@gitorious.org:${REMOTE}
+REPO_PATH=${MYDROID_PATH}/.repo
+BRANCH=$4
+
+# Pretty colors
+WHITE="\033[01;37m"
+PURPLE="\033[01;35m"
+NORMAL="\033[00m"
+
+# Functions
+usage()
+{
+    echo -e "${WHITE} "
+    echo -e "\nusage: ./mrs <command> [--android-path] [--remote-name] [--branch-name]\n"
+    echo -e "The following is commands:"
+    echo -e "--set-pushurl      Set the URL for push"
+    echo -e "--push-code        Push code to remote server"
+    echo -e "--pull-code        Pull code to remote server\n"
+    echo -e "For example:"
+    echo -e "     ./mrs --push-code /home/work/android/ remote_name branch_name"
+    echo -e "${NORMAL}"
+}
+
+if [ ! -f ${REPO_PATH}/project.list ];then
+    usage
+    echo -e "\nERROR !! Android Path not found !\n"
+    exit 1
+else
+    cp -f ${REPO_PATH}/project.list ${PWD}/project.list
+    TEMP_LIST=${PWD}/project.list
+fi
+
+
+echo -e "\n${WHITE}Repo path   = $REPO_PATH ${NORMAL}"
+echo -e "${WHITE}Remote name = $REMOTE ${NORMAL}"
+echo -e "${WHITE}Branch name = $BRANCH ${NORMAL}\n"
+
+# Search for each git repository
+while read NAME
+do
+
+    cd ${REPO_PATH}/../${NAME}
+
+    TEMP_NAME=`echo "${NAME}" | sed -e 's/\//-/g'`
+
+    case $1 in
+        "--set-pushurl")
+            echo -e "${PURPLE} To set the push url -> ${URL}/${TEMP_NAME}.git ${NORMAL}"
+            git remote set-url --push ${REMOTE} ${URL}/${TEMP_NAME}.git
+            ;;
+        "--push-code")
+            echo -e "${PURPLE} To push code -> ${TEMP_NAME} ${NORMAL}"
+            git push ${REMOTE} ${BRANCH}
+            ;;
+        "--pull-code")
+            echo -e "${PURPLE} To pull code -> ${TEMP_NAME} ${NORMAL}"
+            git push ${REMOTE} ${BRANCH}
+            ;;
+        *)
+            usage
+            echo -e "\nERROR !! Command not found !\n"
+            exit 1
+            ;;
+    esac
+
+done < ${TEMP_LIST}
+
+# Remove temp file
+rm -f ${TEMP_LIST}
