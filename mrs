@@ -65,7 +65,7 @@ do
             ;;
         "--pull-code")
             echo -e "${PURPLE} To pull code -> ${TEMP_NAME} ${NORMAL}"
-            git push ${REMOTE} ${BRANCH}
+            git pull ${REMOTE} ${BRANCH}
             ;;
         *)
             usage
