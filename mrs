@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Manage the Repo script
+# Manage Repo script
 #
 # Auther(s) : Hsiao-Yu Chiang <dickychiang73@gmail.com>
 #
@@ -9,7 +9,7 @@
 PWD=`pwd`
 MYDROID_PATH=$2
 REMOTE=$3
-URL=git@gitorious.org:${REMOTE}
+URL=git@gitorious.org:jorjin
 REPO_PATH=${MYDROID_PATH}/.repo
 BRANCH=$4
 
@@ -66,6 +66,10 @@ do
         "--pull-code")
             echo -e "${PURPLE} To pull code -> ${TEMP_NAME} ${NORMAL}"
             git pull ${REMOTE} ${BRANCH}
+            ;;
+        "--del-br")
+            echo -e "${PURPLE} To delete branch -> ${TEMP_NAME} ${NORMAL}"
+            git push ${REMOTE} :${BRANCH}
             ;;
         *)
             usage
